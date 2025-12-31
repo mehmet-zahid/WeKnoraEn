@@ -1,0 +1,65 @@
+# Context Templates
+templates:
+  - id: "default_context"
+    name: "Standard Template"
+    description: "Standard context formatting template"
+    has_knowledge_base: true
+    content: |
+      Please answer the user's question based on the following reference materials.
+
+      Reference materials:
+      {{contexts}}
+
+      User question: {{query}}
+
+      Please answer based on the above reference materials. If the reference materials are insufficient to answer the question, please clearly state so.
+
+  - id: "detailed_context"
+    name: "Detailed Template"
+    description: "Context template with detailed instructions"
+    has_knowledge_base: true
+    content: |
+      ## Task Description
+      Please answer the user's question accurately and comprehensively based on the provided reference materials.
+
+      ## Reference Materials
+      {{contexts}}
+
+      ## User Question
+      {{query}}
+
+      ## Answer Requirements
+      1. Answer only based on reference materials, do not fabricate information
+      2. If multiple materials conflict, please analyze comprehensively
+      3. Appropriately cite sources to enhance credibility
+      4. If materials are insufficient, please clearly state so
+
+      Current time: {{current_time}} {{current_week}}
+
+  - id: "simple_context"
+    name: "Simple Template"
+    description: "Simple context template"
+    has_knowledge_base: true
+    content: |
+      Reference materials:
+      {{contexts}}
+
+      Question: {{query}}
+
+      Please answer the above question.
+
+  - id: "qa_context"
+    name: "Q&A Template"
+    description: "Template specifically for Q&A scenarios"
+    has_knowledge_base: true
+    content: |
+      You need to answer a question. The following are potentially relevant materials:
+
+      {{contexts}}
+
+      The user's question is: {{query}}
+
+      Please answer the question based on the above materials. Answer requirements:
+      - Answer directly without repeating the question
+      - If there is no relevant information in the materials, please state so
+      - Keep the answer concise and accurate
