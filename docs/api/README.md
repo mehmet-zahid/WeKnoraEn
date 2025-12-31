@@ -1,73 +1,73 @@
-# WeKnora API 文档
+# WeKnora API Documentation
 
-## 目录
+## Table of Contents
 
-- [概述](#概述)
-- [基础信息](#基础信息)
-- [认证机制](#认证机制)
-- [错误处理](#错误处理)
-- [API 概览](#api-概览)
+- [Overview](#overview)
+- [Basic Information](#basic-information)
+- [Authentication Mechanism](#authentication-mechanism)
+- [Error Handling](#error-handling)
+- [API Overview](#api-overview)
 
-## 概述
+## Overview
 
-WeKnora 提供了一系列 RESTful API，用于创建和管理知识库、检索知识，以及进行基于知识的问答。本文档详细描述了这些 API 的使用方式。
+WeKnora provides a series of RESTful APIs for creating and managing knowledge bases, retrieving knowledge, and performing knowledge-based Q&A. This document describes in detail how to use these APIs.
 
-## 基础信息
+## Basic Information
 
-- **基础 URL**: `/api/v1`
-- **响应格式**: JSON
-- **认证方式**: API Key
+- **Base URL**: `/api/v1`
+- **Response Format**: JSON
+- **Authentication Method**: API Key
 
-## 认证机制
+## Authentication Mechanism
 
-所有 API 请求需要在 HTTP 请求头中包含 `X-API-Key` 进行身份认证：
+All API requests need to include `X-API-Key` in the HTTP request header for authentication:
 
 ```
 X-API-Key: your_api_key
 ```
 
-为便于问题追踪和调试，建议每个请求的 HTTP 请求头中添加 `X-Request-ID`：
+For convenient issue tracking and debugging, it is recommended to add `X-Request-ID` to each request's HTTP request header:
 
 ```
 X-Request-ID: unique_request_id
 ```
 
-### 获取 API Key
+### Get API Key
 
-在 web 页面完成账户注册后，请前往账户信息页面获取您的 API Key。
+After completing account registration on the web page, please go to the account information page to get your API Key.
 
-请妥善保管您的 API Key，避免泄露。API Key 代表您的账户身份，拥有完整的 API 访问权限。
+Please keep your API Key secure and avoid leakage. The API Key represents your account identity and has full API access permissions.
 
-## 错误处理
+## Error Handling
 
-所有 API 使用标准的 HTTP 状态码表示请求状态，并返回统一的错误响应格式：
+All APIs use standard HTTP status codes to indicate request status and return a unified error response format:
 
 ```json
 {
   "success": false,
   "error": {
-    "code": "错误代码",
-    "message": "错误信息",
-    "details": "错误详情"
+    "code": "error_code",
+    "message": "error_message",
+    "details": "error_details"
   }
 }
 ```
 
-## API 概览
+## API Overview
 
-WeKnora API 按功能分为以下几类：
+WeKnora APIs are divided into the following categories by function:
 
-| 分类 | 描述 | 文档链接 |
-|------|------|----------|
-| 租户管理 | 创建和管理租户账户 | [tenant.md](./tenant.md) |
-| 知识库管理 | 创建、查询和管理知识库 | [knowledge-base.md](./knowledge-base.md) |
-| 知识管理 | 上传、检索和管理知识内容 | [knowledge.md](./knowledge.md) |
-| 模型管理 | 配置和管理各种AI模型 | [model.md](./model.md) |
-| 分块管理 | 管理知识的分块内容 | [chunk.md](./chunk.md) |
-| 标签管理 | 管理知识库的标签分类 | [tag.md](./tag.md) |
-| FAQ管理 | 管理FAQ问答对 | [faq.md](./faq.md) |
-| 会话管理 | 创建和管理对话会话 | [session.md](./session.md) |
-| 知识搜索 | 在知识库中搜索内容 | [knowledge-search.md](./knowledge-search.md) |
-| 聊天功能 | 基于知识库和 Agent 进行问答 | [chat.md](./chat.md) |
-| 消息管理 | 获取和管理对话消息 | [message.md](./message.md) |
-| 评估功能 | 评估模型性能 | [evaluation.md](./evaluation.md) |
+| Category | Description | Documentation Link |
+|----------|-------------|---------------------|
+| Tenant Management | Create and manage tenant accounts | [tenant.md](./tenant.md) |
+| Knowledge Base Management | Create, query, and manage knowledge bases | [knowledge-base.md](./knowledge-base.md) |
+| Knowledge Management | Upload, retrieve, and manage knowledge content | [knowledge.md](./knowledge.md) |
+| Model Management | Configure and manage various AI models | [model.md](./model.md) |
+| Chunk Management | Manage chunked content of knowledge | [chunk.md](./chunk.md) |
+| Tag Management | Manage tag classifications of knowledge bases | [tag.md](./tag.md) |
+| FAQ Management | Manage FAQ Q&A pairs | [faq.md](./faq.md) |
+| Session Management | Create and manage conversation sessions | [session.md](./session.md) |
+| Knowledge Search | Search content in knowledge bases | [knowledge-search.md](./knowledge-search.md) |
+| Chat Functionality | Q&A based on knowledge bases and Agents | [chat.md](./chat.md) |
+| Message Management | Get and manage conversation messages | [message.md](./message.md) |
+| Evaluation Functionality | Evaluate model performance | [evaluation.md](./evaluation.md) |

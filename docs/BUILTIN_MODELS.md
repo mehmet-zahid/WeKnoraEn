@@ -1,37 +1,37 @@
-# 内置模型管理指南
+# Built-in Model Management Guide
 
-## 概述
+## Overview
 
-内置模型是系统级别的模型配置，对所有租户可见，但敏感信息会被隐藏，且不可编辑或删除。内置模型通常用于提供系统默认的模型配置，确保所有租户都能使用统一的模型服务。
+Built-in models are system-level model configurations visible to all tenants, but sensitive information is hidden and cannot be edited or deleted. Built-in models are typically used to provide system default model configurations, ensuring all tenants can use unified model services.
 
-## 内置模型特性
+## Built-in Model Features
 
-- **所有租户可见**：内置模型对所有租户都可见，无需单独配置
-- **安全保护**：内置模型的敏感信息（API Key、Base URL）会被隐藏，无法查看详情
-- **只读保护**：内置模型不能被编辑或删除，只能设置为默认模型
-- **统一管理**：由系统管理员统一维护，确保配置一致性和安全性
+- **Visible to All Tenants**: Built-in models are visible to all tenants without separate configuration
+- **Security Protection**: Sensitive information (API Key, Base URL) of built-in models is hidden and cannot be viewed in detail
+- **Read-only Protection**: Built-in models cannot be edited or deleted, only set as default models
+- **Unified Management**: Maintained by system administrators to ensure configuration consistency and security
 
-## 如何添加内置模型
+## How to Add Built-in Models
 
-内置模型需要通过数据库直接插入。以下是添加内置模型的步骤：
+Built-in models need to be inserted directly through the database. The following are the steps to add built-in models:
 
-### 1. 准备模型数据
+### 1. Prepare Model Data
 
-首先，确保你已经有了要设置为内置模型的模型配置信息，包括：
-- 模型名称（name）
-- 模型类型（type）：`KnowledgeQA`、`Embedding`、`Rerank` 或 `VLLM`
-- 模型来源（source）：`local` 或 `remote`
-- 模型参数（parameters）：包括 base_url、api_key、provider 等
-- 租户ID（tenant_id）：建议使用小于10000的租户ID，避免冲突
+First, ensure you have the model configuration information to be set as a built-in model, including:
+- Model name (name)
+- Model type (type): `KnowledgeQA`, `Embedding`, `Rerank`, or `VLLM`
+- Model source (source): `local` or `remote`
+- Model parameters (parameters): including base_url, api_key, provider, etc.
+- Tenant ID (tenant_id): It is recommended to use a tenant ID less than 10000 to avoid conflicts
 
-**支持的服务商（provider）**：`generic`（自定义）、`openai`、`aliyun`、`zhipu`、`volcengine`、`hunyuan`、`deepseek`、`minimax`、`mimo`、`siliconflow`、`jina`、`openrouter`、`gemini`
+**Supported Providers**: `generic` (custom), `openai`, `aliyun`, `zhipu`, `volcengine`, `hunyuan`, `deepseek`, `minimax`, `mimo`, `siliconflow`, `jina`, `openrouter`, `gemini`
 
-### 2. 执行 SQL 插入语句
+### 2. Execute SQL Insert Statement
 
-使用以下 SQL 语句插入内置模型：
+Use the following SQL statement to insert built-in models:
 
 ```sql
--- 示例：插入一个 LLM 内置模型
+-- Example: Insert an LLM built-in model
 INSERT INTO models (
     id,
     tenant_id,
@@ -44,19 +44,19 @@ INSERT INTO models (
     status,
     is_builtin
 ) VALUES (
-    'builtin-llm-001',                    -- 使用固定ID，建议使用 builtin- 前缀
-    10000,                                -- 租户ID（使用第一个租户）
-    'GPT-4',                              -- 模型名称
-    'KnowledgeQA',                        -- 模型类型
-    'remote',                             -- 模型来源
-    '内置 LLM 模型',                       -- 描述
-    '{"base_url": "https://api.openai.com/v1", "api_key": "sk-xxx", "provider": "openai"}'::jsonb,  -- 参数（JSON格式）
-    false,                                -- 是否默认
-    'active',                             -- 状态
-    true                                  -- 标记为内置模型
+    'builtin-llm-001',                    -- Use fixed ID, recommended to use builtin- prefix
+    10000,                                -- Tenant ID (use first tenant)
+    'GPT-4',                              -- Model name
+    'KnowledgeQA',                        -- Model type
+    'remote',                             -- Model source
+    'Built-in LLM Model',                 -- Description
+    '{"base_url": "https://api.openai.com/v1", "api_key": "sk-xxx", "provider": "openai"}'::jsonb,  -- Parameters (JSON format)
+    false,                                -- Is default
+    'active',                             -- Status
+    true                                  -- Mark as built-in model
 ) ON CONFLICT (id) DO NOTHING;
 
--- 示例：插入一个 Embedding 内置模型
+-- Example: Insert an Embedding built-in model
 INSERT INTO models (
     id,
     tenant_id,
@@ -74,14 +74,14 @@ INSERT INTO models (
     'text-embedding-ada-002',
     'Embedding',
     'remote',
-    '内置 Embedding 模型',
+    'Built-in Embedding Model',
     '{"base_url": "https://api.openai.com/v1", "api_key": "sk-xxx", "provider": "openai", "embedding_parameters": {"dimension": 1536, "truncate_prompt_tokens": 0}}'::jsonb,
     false,
     'active',
     true
 ) ON CONFLICT (id) DO NOTHING;
 
--- 示例：插入一个 ReRank 内置模型
+-- Example: Insert a ReRank built-in model
 INSERT INTO models (
     id,
     tenant_id,
@@ -99,14 +99,14 @@ INSERT INTO models (
     'bge-reranker-base',
     'Rerank',
     'remote',
-    '内置 ReRank 模型',
+    'Built-in ReRank Model',
     '{"base_url": "https://api.jina.ai/v1", "api_key": "jina-xxx", "provider": "jina"}'::jsonb,
     false,
     'active',
     true
 ) ON CONFLICT (id) DO NOTHING;
 
--- 示例：插入一个 VLLM 内置模型
+-- Example: Insert a VLLM built-in model
 INSERT INTO models (
     id,
     tenant_id,
@@ -124,7 +124,7 @@ INSERT INTO models (
     'gpt-4-vision',
     'VLLM',
     'remote',
-    '内置 VLLM 模型',
+    'Built-in VLLM Model',
     '{"base_url": "https://dashscope.aliyuncs.com/compatible-mode/v1", "api_key": "sk-xxx", "provider": "aliyun"}'::jsonb,
     false,
     'active',
@@ -132,9 +132,9 @@ INSERT INTO models (
 ) ON CONFLICT (id) DO NOTHING;
 ```
 
-### 3. 验证插入结果
+### 3. Verify Insertion Results
 
-执行以下 SQL 查询验证内置模型是否成功插入：
+Execute the following SQL query to verify if the built-in model was successfully inserted:
 
 ```sql
 SELECT id, name, type, is_builtin, status 
@@ -143,33 +143,32 @@ WHERE is_builtin = true
 ORDER BY type, created_at;
 ```
 
-## 注意事项
+## Notes
 
-1. **ID 命名规范**：建议使用 `builtin-{type}-{序号}` 的格式，例如 `builtin-llm-001`、`builtin-embedding-001`
-2. **租户ID**：内置模型可以属于任意租户，但建议使用第一个租户ID（通常是 10000）
-3. **参数格式**：`parameters` 字段必须是有效的 JSON 格式
-4. **幂等性**：使用 `ON CONFLICT (id) DO NOTHING` 确保重复执行不会报错
-5. **安全性**：内置模型的 API Key 和 Base URL 在前端会被自动隐藏，但数据库中的原始数据仍然存在，请妥善保管数据库访问权限
+1. **ID Naming Convention**: It is recommended to use the format `builtin-{type}-{number}`, for example `builtin-llm-001`, `builtin-embedding-001`
+2. **Tenant ID**: Built-in models can belong to any tenant, but it is recommended to use the first tenant ID (usually 10000)
+3. **Parameter Format**: The `parameters` field must be valid JSON format
+4. **Idempotency**: Use `ON CONFLICT (id) DO NOTHING` to ensure repeated execution does not cause errors
+5. **Security**: The API Key and Base URL of built-in models will be automatically hidden in the frontend, but the original data in the database still exists. Please keep database access permissions secure.
 
-## 将现有模型设置为内置模型
+## Set Existing Model as Built-in Model
 
-如果你已经有一个模型，想将其设置为内置模型，可以使用 UPDATE 语句：
+If you already have a model and want to set it as a built-in model, you can use an UPDATE statement:
 
 ```sql
 UPDATE models 
 SET is_builtin = true 
-WHERE id = '模型ID' AND name = '模型名称';
+WHERE id = 'model_id' AND name = 'model_name';
 ```
 
-## 移除内置模型
+## Remove Built-in Model
 
-如果需要移除内置模型标记（恢复为普通模型），执行：
+If you need to remove the built-in model flag (restore to normal model), execute:
 
 ```sql
 UPDATE models 
 SET is_builtin = false 
-WHERE id = '模型ID';
+WHERE id = 'model_id';
 ```
 
-注意：移除内置模型标记后，该模型将恢复为普通模型，可以被编辑和删除。
-
+Note: After removing the built-in model flag, the model will be restored to a normal model and can be edited and deleted.

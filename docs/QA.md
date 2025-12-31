@@ -1,121 +1,119 @@
-# 常见问题
+# Common Questions
 
-## 1. 如何查看日志？
+## 1. How to View Logs?
 ```bash
 docker compose logs -f app docreader postgres
 ```
 
-## 2. 如何启动和停止服务？
+## 2. How to Start and Stop Services?
 ```bash
-# 启动服务
+# Start services
 ./scripts/start_all.sh
 
-# 停止服务
+# Stop services
 ./scripts/start_all.sh --stop
 
-# 清空数据库
+# Clear database
 ./scripts/start_all.sh --stop && make clean-db
 ```
 
-## 3. 服务启动后无法正常上传文档？
+## 3. Unable to Upload Documents After Service Startup?
 
-通常是Embedding模型和对话模型没有正确被设置导致。按照以下步骤进行排查
+This is usually caused by Embedding models and conversation models not being correctly configured. Follow these steps to troubleshoot:
 
-1. 查看`.env`配置中的模型信息是否配置完整，其中如果使用ollama访问本地模型，需要确保本地ollama服务正常运行，同时在`.env`中的如下环境变量需要正确设置:
+1. Check if the model information in the `.env` configuration is complete. If using ollama to access local models, ensure the local ollama service is running normally, and the following environment variables in `.env` need to be correctly set:
 ```bash
 # LLM Model
 INIT_LLM_MODEL_NAME=your_llm_model
 # Embedding Model
 INIT_EMBEDDING_MODEL_NAME=your_embedding_model
-# Embedding模型向量维度
+# Embedding model vector dimension
 INIT_EMBEDDING_MODEL_DIMENSION=your_embedding_model_dimension
-# Embedding模型的ID，通常是一个字符串
+# Embedding model ID, usually a string
 INIT_EMBEDDING_MODEL_ID=your_embedding_model_id
 ```
 
-如果是通过remote api访问模型，则需要额外提供对应的`BASE_URL`和`API_KEY`:
+If accessing models through remote API, you need to additionally provide the corresponding `BASE_URL` and `API_KEY`:
 ```bash
-# LLM模型的访问地址
+# LLM model access address
 INIT_LLM_MODEL_BASE_URL=your_llm_model_base_url
-# LLM模型的API密钥，如果需要身份验证，可以设置
+# LLM model API key, can be set if authentication is required
 INIT_LLM_MODEL_API_KEY=your_llm_model_api_key
-# Embedding模型的访问地址
+# Embedding model access address
 INIT_EMBEDDING_MODEL_BASE_URL=your_embedding_model_base_url
-# Embedding模型的API密钥，如果需要身份验证，可以设置
+# Embedding model API key, can be set if authentication is required
 INIT_EMBEDDING_MODEL_API_KEY=your_embedding_model_api_key
 ```
 
-当需要重排序功能时，需要额外配置Rerank模型，具体配置如下：
+When reranking functionality is needed, you need to additionally configure the Rerank model. The specific configuration is as follows:
 ```bash
-# 使用的Rerank模型名称
+# Rerank model name to use
 INIT_RERANK_MODEL_NAME=your_rerank_model_name
-# Rerank模型的访问地址
+# Rerank model access address
 INIT_RERANK_MODEL_BASE_URL=your_rerank_model_base_url
-# Rerank模型的API密钥，如果需要身份验证，可以设置
+# Rerank model API key, can be set if authentication is required
 INIT_RERANK_MODEL_API_KEY=your_rerank_model_api_key
 ```
 
-2. 查看主服务日志，是否有`ERROR`日志输出
+2. Check the main service logs to see if there are any `ERROR` log outputs.
 
-## 4. 如何开启多模态功能？
-1. 确保 `.env` 如下配置被正确设置:
+## 4. How to Enable Multimodal Functionality?
+1. Ensure the following configuration in `.env` is correctly set:
 ```bash
-# VLM_MODEL_NAME 使用的多模态模型名称
+# VLM_MODEL_NAME Multimodal model name to use
 VLM_MODEL_NAME=your_vlm_model_name
 
-# VLM_MODEL_BASE_URL 使用的多模态模型访问地址
+# VLM_MODEL_BASE_URL Multimodal model access address to use
 VLM_MODEL_BASE_URL=your_vlm_model_base_url
 
-# VLM_MODEL_API_KEY 使用的多模态模型API密钥
+# VLM_MODEL_API_KEY Multimodal model API key to use
 VLM_MODEL_API_KEY=your_vlm_model_api_key
 ```
-注：多模态大模型当前仅支持remote api访问，固需要提供`VLM_MODEL_BASE_URL`和`VLM_MODEL_API_KEY`
+Note: Multimodal large models currently only support remote API access, so you need to provide `VLM_MODEL_BASE_URL` and `VLM_MODEL_API_KEY`.
 
-2. 解析后的文件需要上传到COS中，确保 `.env` 中 `COS` 信息正确设置：
+2. Parsed files need to be uploaded to COS. Ensure the `COS` information in `.env` is correctly set:
 ```bash
-# 腾讯云COS的访问密钥ID
+# Tencent Cloud COS access key ID
 COS_SECRET_ID=your_cos_secret_id
 
-# 腾讯云COS的密钥
+# Tencent Cloud COS secret key
 COS_SECRET_KEY=your_cos_secret_key
 
-# 腾讯云COS的区域，例如 ap-guangzhou
+# Tencent Cloud COS region, e.g., ap-guangzhou
 COS_REGION=your_cos_region
 
-# 腾讯云COS的桶名称
+# Tencent Cloud COS bucket name
 COS_BUCKET_NAME=your_cos_bucket_name
 
-# 腾讯云COS的应用ID
+# Tencent Cloud COS application ID
 COS_APP_ID=your_cos_app_id
 
-# 腾讯云COS的路径前缀，用于存储文件
+# Tencent Cloud COS path prefix for storing files
 COS_PATH_PREFIX=your_cos_path_prefix
 ```
-重要：务必将COS中文件的权限设置为**公有读**，否则文档解析模块无法正常解析文件
+Important: Make sure to set file permissions in COS to **public read**, otherwise the document parsing module cannot parse files normally.
 
-3. 查看文档解析模块日志，查看OCR和Caption是否正确解析和打印
+3. Check the document parsing module logs to see if OCR and Caption are correctly parsed and printed.
 
+## 5. How to Use Data Analysis Functionality?
 
-## 5. 如何使用数据分析功能？
+Before using the data analysis functionality, ensure the agent has configured relevant tools:
 
-在使用数据分析功能前，请确保智能体已配置相关工具：
+1. **Intelligent Reasoning**: Need to check the following two tools in the tool configuration:
+   - View Data Metadata
+   - Data Analysis
 
-1. **智能推理**：需在工具配置中勾选以下两个工具：
-   - 查看数据元信息
-   - 数据分析
+2. **Quick Q&A Agent**: No need to manually select tools, can directly perform simple data query operations.
 
-2. **快速问答智能体**：无需手动选择工具，即可直接进行简单的数据查询操作。
+### Notes and Usage Guidelines
 
-### 注意事项与使用规范
+1. **Supported File Formats**
+   - Currently only supports **CSV** (`.csv`) and **Excel** (`.xlsx`, `.xls`) format files.
+   - For complex Excel files, if reading fails, it is recommended to convert them to standard CSV format and re-upload.
 
-1. **支持的文件格式**
-   - 目前仅支持 **CSV** (`.csv`) 和 **Excel** (`.xlsx`, `.xls`) 格式的文件。
-   - 对于复杂的 Excel 文件，如果读取失败，建议将其转换为标准的 CSV 格式后重新上传。
-
-2. **查询限制**
-   - 仅支持 **只读查询**，包括 `SELECT`, `SHOW`, `DESCRIBE`, `EXPLAIN`, `PRAGMA` 等语句。
-   - 禁止执行任何修改数据的操作，如 `INSERT`, `UPDATE`, `DELETE`, `CREATE`, `DROP` 等。
-
+2. **Query Restrictions**
+   - Only supports **read-only queries**, including `SELECT`, `SHOW`, `DESCRIBE`, `EXPLAIN`, `PRAGMA` and other statements.
+   - Prohibits executing any data modification operations, such as `INSERT`, `UPDATE`, `DELETE`, `CREATE`, `DROP`, etc.
 
 ## P.S.
-如果以上方式未解决问题，请在issue中描述您的问题，并提供必要的日志信息辅助我们进行问题排查
+If the above methods do not solve the problem, please describe your issue in an issue and provide necessary log information to help us troubleshoot.

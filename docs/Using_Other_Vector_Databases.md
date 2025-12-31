@@ -1,45 +1,45 @@
-### 如何集成新的向量数据库
+### How to Integrate New Vector Databases
 
-本文提供了向 WeKnora 项目添加新向量数据库支持的完整指南。通过实现标准化接口和遵循结构化流程，开发者可以高效地集成自定义向量数据库。
+This document provides a complete guide for adding new vector database support to the WeKnora project. By implementing standardized interfaces and following a structured process, developers can efficiently integrate custom vector databases.
 
-### 集成流程
+### Integration Process
 
-#### 1. 实现基础检索引擎接口
+#### 1. Implement Basic Retrieval Engine Interface
 
-首先需要实现 `interfaces` 包中的 `RetrieveEngine` 接口，定义检索引擎的核心能力：
+First, you need to implement the `RetrieveEngine` interface in the `interfaces` package, which defines the core capabilities of the retrieval engine:
 
 ```go
 type RetrieveEngine interface {
-    // 返回检索引擎的类型标识
+    // Returns the type identifier of the retrieval engine
     EngineType() types.RetrieverEngineType
 
-    // 执行检索操作，返回匹配结果
+    // Executes retrieval operation, returns matching results
     Retrieve(ctx context.Context, params types.RetrieveParams) ([]*types.RetrieveResult, error)
 
-    // 返回该引擎支持的检索类型列表
+    // Returns the list of retrieval types supported by this engine
     Support() []types.RetrieverType
 }
 ```
 
-#### 2. 实现存储层接口
+#### 2. Implement Storage Layer Interface
 
-实现 `RetrieveEngineRepository` 接口，扩展基础检索引擎能力，添加索引管理功能：
+Implement the `RetrieveEngineRepository` interface to extend the basic retrieval engine capabilities and add index management functionality:
 
 ```go
 type RetrieveEngineRepository interface {
-    // 保存单个索引信息
+    // Save a single index information
     Save(ctx context.Context, indexInfo *types.IndexInfo, params map[string]any) error
     
-    // 批量保存多个索引信息
+    // Batch save multiple index information
     BatchSave(ctx context.Context, indexInfoList []*types.IndexInfo, params map[string]any) error
     
-    // 估算索引存储所需空间
+    // Estimate the storage space required for indexes
     EstimateStorageSize(ctx context.Context, indexInfoList []*types.IndexInfo, params map[string]any) int64
     
-    // 通过分块ID列表删除索引
+    // Delete indexes by chunk ID list
     DeleteByChunkIDList(ctx context.Context, indexIDList []string, dimension int) error
     
-    // 复制索引数据，避免重新计算嵌入向量
+    // Copy index data to avoid recalculating embedding vectors
     CopyIndices(
         ctx context.Context,
         sourceKnowledgeBaseID string,
@@ -49,42 +49,42 @@ type RetrieveEngineRepository interface {
         dimension int,
     ) error
     
-    // 通过知识ID列表删除索引
+    // Delete indexes by knowledge ID list
     DeleteByKnowledgeIDList(ctx context.Context, knowledgeIDList []string, dimension int) error
     
-    // 继承RetrieveEngine接口
+    // Inherits RetrieveEngine interface
     RetrieveEngine
 }
 ```
 
-#### 3. 实现服务层接口
+#### 3. Implement Service Layer Interface
 
-创建实现 `RetrieveEngineService` 接口的服务，负责处理索引创建和管理的业务逻辑：
+Create a service that implements the `RetrieveEngineService` interface, responsible for handling the business logic of index creation and management:
 
 ```go
 type RetrieveEngineService interface {
-    // 创建单个索引
+    // Create a single index
     Index(ctx context.Context,
         embedder embedding.Embedder,
         indexInfo *types.IndexInfo,
         retrieverTypes []types.RetrieverType,
     ) error
 
-    // 批量创建索引
+    // Batch create indexes
     BatchIndex(ctx context.Context,
         embedder embedding.Embedder,
         indexInfoList []*types.IndexInfo,
         retrieverTypes []types.RetrieverType,
     ) error
 
-    // 估算索引存储空间
+    // Estimate index storage space
     EstimateStorageSize(ctx context.Context,
         embedder embedding.Embedder,
         indexInfoList []*types.IndexInfo,
         retrieverTypes []types.RetrieverType,
     ) int64
     
-    // 复制索引数据
+    // Copy index data
     CopyIndices(
         ctx context.Context,
         sourceKnowledgeBaseID string,
@@ -94,33 +94,33 @@ type RetrieveEngineService interface {
         dimension int,
     ) error
 
-    // 删除索引
+    // Delete indexes
     DeleteByChunkIDList(ctx context.Context, indexIDList []string, dimension int) error
     DeleteByKnowledgeIDList(ctx context.Context, knowledgeIDList []string, dimension int) error
 
-    // 继承RetrieveEngine接口
+    // Inherits RetrieveEngine interface
     RetrieveEngine
 }
 ```
 
-#### 4. 添加环境变量配置
+#### 4. Add Environment Variable Configuration
 
-在环境配置中添加新数据库的必要连接参数：
+Add the necessary connection parameters for the new database in the environment configuration:
 
 ```
-# 在RETRIEVE_DRIVER中添加新数据库驱动名称（多个驱动用逗号分隔）
+# Add the new database driver name to RETRIEVE_DRIVER (multiple drivers separated by commas)
 RETRIEVE_DRIVER=postgres,elasticsearch_v8,your_database
 
-# 新数据库的连接参数
+# Connection parameters for the new database
 YOUR_DATABASE_ADDR=your_database_host:port
 YOUR_DATABASE_USERNAME=username
 YOUR_DATABASE_PASSWORD=password
-# 其他必要的连接参数...
+# Other necessary connection parameters...
 ```
 
-#### 5. 注册检索引擎
+#### 5. Register Retrieval Engine
 
-在 `internal/container/container.go` 文件的 `initRetrieveEngineRegistry` 函数中添加新数据库的初始化与注册逻辑：
+Add the initialization and registration logic for the new database in the `initRetrieveEngineRegistry` function in the `internal/container/container.go` file:
 
 ```go
 func initRetrieveEngineRegistry(db *gorm.DB, cfg *config.Config) (interfaces.RetrieveEngineRegistry, error) {
@@ -128,25 +128,25 @@ func initRetrieveEngineRegistry(db *gorm.DB, cfg *config.Config) (interfaces.Ret
     retrieveDriver := strings.Split(os.Getenv("RETRIEVE_DRIVER"), ",")
     log := logger.GetLogger(context.Background())
 
-    // 已有的PostgreSQL和Elasticsearch初始化代码...
+    // Existing PostgreSQL and Elasticsearch initialization code...
     
-    // 添加新向量数据库的初始化代码
+    // Add initialization code for new vector database
     if slices.Contains(retrieveDriver, "your_database") {
-        // 初始化数据库客户端
+        // Initialize database client
         client, err := your_database.NewClient(your_database.Config{
             Addresses: []string{os.Getenv("YOUR_DATABASE_ADDR")},
             Username:  os.Getenv("YOUR_DATABASE_USERNAME"),
             Password:  os.Getenv("YOUR_DATABASE_PASSWORD"),
-            // 其他连接参数...
+            // Other connection parameters...
         })
         
         if err != nil {
             log.Errorf("Create your_database client failed: %v", err)
         } else {
-            // 创建检索引擎仓库
+            // Create retrieval engine repository
             yourDatabaseRepo := your_database.NewYourDatabaseRepository(client, cfg)
             
-            // 注册检索引擎
+            // Register retrieval engine
             if err := registry.Register(
                 retriever.NewKVHybridRetrieveEngine(
                     yourDatabaseRepo, types.YourDatabaseRetrieverEngineType,
@@ -163,28 +163,26 @@ func initRetrieveEngineRegistry(db *gorm.DB, cfg *config.Config) (interfaces.Ret
 }
 ```
 
-#### 6. 定义检索引擎类型常量
+#### 6. Define Retrieval Engine Type Constants
 
-在 `internal/types/retriever.go` 文件中添加新的检索引擎类型常量：
+Add new retrieval engine type constants in the `internal/types/retriever.go` file:
 
 ```go
-// RetrieverEngineType 定义检索引擎类型
+// RetrieverEngineType defines retrieval engine types
 const (
     ElasticsearchRetrieverEngineType RetrieverEngineType = "elasticsearch"
     PostgresRetrieverEngineType      RetrieverEngineType = "postgres"
-    YourDatabaseRetrieverEngineType  RetrieverEngineType = "your_database" // 添加新数据库类型
+    YourDatabaseRetrieverEngineType  RetrieverEngineType = "your_database" // Add new database type
 )
 ```
 
-## 参考实现示例
+## Reference Implementation Examples
 
-建议参考现有的 PostgreSQL 和 Elasticsearch 实现作为开发模板。这些实现位于以下目录：
+It is recommended to refer to the existing PostgreSQL and Elasticsearch implementations as development templates. These implementations are located in the following directories:
 
 - PostgreSQL: `internal/application/repository/retriever/postgres/`
 - ElasticsearchV7: `internal/application/repository/retriever/elasticsearch/v7/`
 - ElasticsearchV8: `internal/application/repository/retriever/elasticsearch/v8/`
 
-通过遵循以上步骤和参考现有实现，你可以成功集成新的向量数据库到 WeKnora 系统中，扩展其向量检索能力。
-
-
+By following the above steps and referring to existing implementations, you can successfully integrate new vector databases into the WeKnora system, expanding its vector retrieval capabilities.
 
