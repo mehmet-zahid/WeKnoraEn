@@ -40,6 +40,14 @@
 
 # 💡 WeKnora - LLM-Powered Document Understanding & Retrieval Framework
 
+## 🙏 Attribution
+
+This project is based on the original work by [Tencent/WeKnora](https://github.com/Tencent/WeKnora).
+
+Original repository: https://github.com/Tencent/WeKnora
+
+Modified and maintained by [Mehmet Zahid].
+
 ## 📌 Overview
 
 [**WeKnora**](https://weknora.weixin.qq.com) is an LLM-powered framework designed for deep document understanding and semantic retrieval, especially for handling complex, heterogeneous documents. 
