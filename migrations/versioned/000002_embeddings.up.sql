@@ -15,7 +15,12 @@ BEGIN
     -- Create required extensions
     CREATE EXTENSION IF NOT EXISTS vector;
     CREATE EXTENSION IF NOT EXISTS pg_trgm;
-    CREATE EXTENSION IF NOT EXISTS pg_search;
+    -- pg_search is ParadeDB-specific, skip if not available
+    BEGIN
+        CREATE EXTENSION IF NOT EXISTS pg_search;
+    EXCEPTION WHEN OTHERS THEN
+        RAISE NOTICE 'pg_search extension not available (ParadeDB-specific), skipping...';
+    END;
 
     -- Create embeddings table
     RAISE NOTICE '[Conditional Migration: embeddings] Creating indexes for embeddings (this may take a while)...';
@@ -37,22 +42,26 @@ BEGIN
 
     CREATE UNIQUE INDEX IF NOT EXISTS embeddings_unique_source ON embeddings(source_id, source_type);
 
-    -- Create BM25 search index (check if exists first)
-    IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'embeddings_search_idx') THEN
-        CREATE INDEX embeddings_search_idx ON embeddings
-        USING bm25 (id, knowledge_base_id, content, knowledge_id, chunk_id)
-        WITH (
-            key_field = 'id',
-            text_fields = '{
-                "content": {
-                  "tokenizer": {"type": "chinese_lindera"}
-                }
-            }'
-        );
-        RAISE NOTICE '[Conditional Migration: embeddings] Created BM25 index embeddings_search_idx';
-    ELSE
-        RAISE NOTICE '[Conditional Migration: embeddings] BM25 index embeddings_search_idx already exists';
-    END IF;
+    -- Create BM25 search index (ParadeDB-specific, skip if not available)
+    BEGIN
+        IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'embeddings_search_idx') THEN
+            CREATE INDEX embeddings_search_idx ON embeddings
+            USING bm25 (id, knowledge_base_id, content, knowledge_id, chunk_id)
+            WITH (
+                key_field = 'id',
+                text_fields = '{
+                    "content": {
+                      "tokenizer": {"type": "chinese_lindera"}
+                    }
+                }'
+            );
+            RAISE NOTICE '[Conditional Migration: embeddings] Created BM25 index embeddings_search_idx';
+        ELSE
+            RAISE NOTICE '[Conditional Migration: embeddings] BM25 index embeddings_search_idx already exists';
+        END IF;
+    EXCEPTION WHEN OTHERS THEN
+        RAISE NOTICE '[Conditional Migration: embeddings] BM25 index not available (ParadeDB-specific), skipping...';
+    END;
 
     -- Create HNSW indexes for vector search (check if exists first)
     IF NOT EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'embeddings_embedding_idx' OR indexname LIKE 'embeddings_embedding%3584%') THEN
@@ -84,11 +93,15 @@ BEGIN
     -- Add index for knowledge_base_id
     CREATE INDEX IF NOT EXISTS idx_embeddings_knowledge_base_id ON embeddings(knowledge_base_id);
 
-    -- Reindex BM25 search index (idempotent - will rebuild if exists)
-    IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'embeddings_search_idx') THEN
-        REINDEX INDEX embeddings_search_idx;
-        RAISE NOTICE '[Migration 000002] Reindexed embeddings_search_idx';
-    END IF;
+    -- Reindex BM25 search index (idempotent - will rebuild if exists, ParadeDB-specific)
+    BEGIN
+        IF EXISTS (SELECT 1 FROM pg_indexes WHERE indexname = 'embeddings_search_idx') THEN
+            REINDEX INDEX embeddings_search_idx;
+            RAISE NOTICE '[Migration 000002] Reindexed embeddings_search_idx';
+        END IF;
+    EXCEPTION WHEN OTHERS THEN
+        RAISE NOTICE '[Migration 000002] BM25 index reindex skipped (ParadeDB-specific)';
+    END;
 
     RAISE NOTICE '[Conditional Migration: embeddings] Embeddings table setup completed successfully!';
 END $$;

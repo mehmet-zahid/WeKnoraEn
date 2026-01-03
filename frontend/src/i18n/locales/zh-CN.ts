@@ -719,6 +719,7 @@ export default {
     reset: "重置",
     clear: "清空",
     website: "官方网站",
+    github: "GitHub",
     on: "开启",
     off: "关闭",
     resetToDefault: "恢复默认",

@@ -142,7 +142,7 @@
             <p class="hint-title">{{ $t('agentSettings.systemPrompt.availablePlaceholders') }}</p>
             <ul class="placeholder-list">
               <li v-for="placeholder in availablePlaceholders" :key="placeholder.name">
-                <code v-html="`{{${placeholder.name}}}`"></code> - {{ placeholder.label }} ({{ placeholder.description }})
+                <code>{{ formatPlaceholder(placeholder.name) }}</code> - {{ placeholder.label }} ({{ placeholder.description }})
               </li>
             </ul>
             <p class="hint-tip">{{ $t('agentSettings.systemPrompt.hintPrefix') }} <code>&#123;&#123;</code> {{ $t('agentSettings.systemPrompt.hintSuffix') }}</p>
@@ -200,7 +200,7 @@
                 @mouseenter="selectedPlaceholderIndex = index"
               >
                   <div class="placeholder-name">
-                    <code v-html="`{{${placeholder.name}}}`"></code>
+                    <code>{{ formatPlaceholder(placeholder.name) }}</code>
                   </div>
                   <div class="placeholder-desc">{{ placeholder.description }}</div>
                 </div>
@@ -863,6 +863,12 @@ const loadingModels = ref(false)
 const availableTools = ref<ToolDefinition[]>([])
 // Available placeholders list
 const availablePlaceholders = ref<PlaceholderDefinition[]>([])
+
+// Format placeholder name with curly braces
+const formatPlaceholder = (name: string): string => {
+  return `{{${name}}}`
+}
+
 const displayAllowedTools = computed(() => {
   return localAllowedTools.value.map(name => {
     const detail = availableTools.value.find(tool => tool.name === name)

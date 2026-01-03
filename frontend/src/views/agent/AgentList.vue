@@ -85,7 +85,7 @@
         </div>
 
         <!-- Card footer -->
-        <div class="card-bottom">
+        <div class="card-bottom" @click.stop>
           <div class="bottom-left">
             <div class="feature-badges">
               <t-tooltip :content="agent.config?.agent_mode === 'smart-reasoning' ? $t('agent.mode.agent') : $t('agent.mode.normal')" placement="top">
@@ -277,14 +277,30 @@ const handleCardClick = (agent: AgentWithUI) => {
     return
   }
   // Click card to edit (including built-in agents)
-  handleEdit(agent)
+  try {
+    handleEdit(agent)
+  } catch (error) {
+    console.error('Error opening agent editor:', error)
+    MessagePlugin.error(t('agent.messages.openFailed') || 'Failed to open agent editor')
+  }
 }
 
 const handleEdit = (agent: AgentWithUI) => {
-  agent.showMore = false
-  editingAgent.value = agent
-  editorMode.value = 'edit'
-  editorVisible.value = true
+  try {
+    agent.showMore = false
+    // Ensure agent data is properly structured
+    if (!agent || !agent.id) {
+      console.error('Invalid agent data:', agent)
+      MessagePlugin.error(t('agent.messages.invalidAgent') || 'Invalid agent data')
+      return
+    }
+    editingAgent.value = agent
+    editorMode.value = 'edit'
+    editorVisible.value = true
+  } catch (error) {
+    console.error('Error in handleEdit:', error)
+    MessagePlugin.error(t('agent.messages.openFailed') || 'Failed to open agent editor')
+  }
 }
 
 const handleDelete = (agent: AgentWithUI) => {
@@ -413,7 +429,7 @@ defineExpose({
   padding: 16px 18px;
   display: flex;
   flex-direction: column;
-  height: 160px;
+  min-height: 180px;
 
   &:hover {
     border-color: #07c05f;
@@ -604,20 +620,22 @@ defineExpose({
 .card-content {
   flex: 1;
   margin-bottom: 12px;
-  overflow: hidden;
+  overflow: visible;
+  min-height: 40px;
 }
 
 .card-description {
   display: -webkit-box;
   -webkit-box-orient: vertical;
-  -webkit-line-clamp: 2;
-  line-clamp: 2;
+  -webkit-line-clamp: 3;
+  line-clamp: 3;
   overflow: hidden;
   color: #666;
   font-family: "PingFang SC";
   font-size: 13px;
   font-weight: 400;
   line-height: 20px;
+  word-break: break-word;
 }
 
 .card-bottom {

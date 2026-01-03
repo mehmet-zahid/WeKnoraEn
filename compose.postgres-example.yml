@@ -1,0 +1,29 @@
+# Standart PostgreSQL ile extension'ları otomatik yükleme örneği
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:17
+    container_name: shared-postgres
+    environment:
+      POSTGRES_USER: mzisik
+      POSTGRES_PASSWORD: Estagfirullah1
+      POSTGRES_DB: WeKnora
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # Init script'leri buraya mount edin - container ilk başlatıldığında otomatik çalışır
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - shared-net
+    # pgvector extension'ını yüklemek için build arg veya custom image gerekebilir
+    # Alternatif: Container başladıktan sonra manuel yükleyin veya ParadeDB kullanın
+
+volumes:
+  pgdata:
+
+networks:
+  shared-net:
+    driver: bridge
+

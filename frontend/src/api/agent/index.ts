@@ -138,14 +138,14 @@ export function isBuiltinAgent(agentId: string): boolean {
   return agentId.startsWith('builtin-');
 }
 
-// 占位符定义
+// Placeholder definition
 export interface PlaceholderDefinition {
   name: string;
   label: string;
   description: string;
 }
 
-// 占位符响应
+// Placeholder response
 export interface PlaceholdersResponse {
   all: PlaceholderDefinition[];
   system_prompt: PlaceholderDefinition[];
@@ -156,7 +156,7 @@ export interface PlaceholdersResponse {
   fallback_prompt: PlaceholderDefinition[];
 }
 
-// 获取占位符定义
+// Get placeholder definitions
 export function getPlaceholders() {
   return get<{ data: PlaceholdersResponse }>('/api/v1/agents/placeholders');
 }

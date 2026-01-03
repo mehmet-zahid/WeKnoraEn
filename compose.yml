@@ -160,7 +160,6 @@ services:
     extra_hosts:
       - "host.docker.internal:host-gateway"
 
-  # 修改的PostgreSQL配置
   postgres:
     image: paradedb/paradedb:v0.18.9-pg17
     container_name: WeKnora-postgres
@@ -174,12 +173,11 @@ services:
       - WeKnora-network
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U ${DB_USER}"]
-      interval: 10s # 增加时间间隔
-      timeout: 10s # 增加超时时间
-      retries: 3 # 减少重试次数，让失败更快反馈
-      start_period: 30s # 给予初始启动更多时间
+      interval: 10s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
     restart: unless-stopped
-    # 添加停机时的优雅退出时间
     stop_grace_period: 1m
 
   redis:
@@ -217,20 +215,20 @@ services:
     image: jaegertracing/all-in-one:1.76.0
     container_name: WeKnora-jaeger
     ports:
-      - "6831:6831/udp" # Jaeger Thrift接收器
-      - "6832:6832/udp" # Jaeger Thrift接收器(Compact)
-      - "5778:5778" # 配置端口
-      - "16686:16686" # Web UI
-      - "4317:4317" # OTLP gRPC接收器
-      - "4318:4318" # OTLP HTTP接收器
-      - "14250:14250" # 接收模型端口
-      - "14268:14268" # Jaeger HTTP接收器
-      - "9411:9411" # Zipkin兼容性端口
+      - "6831:6831/udp"   # Jaeger Thrift receiver
+      - "6832:6832/udp"   # Jaeger Thrift receiver (Compact)
+      - "5778:5778"       # Configuration port
+      - "16686:16686"     # Web UI
+      - "4317:4317"       # OTLP gRPC receiver
+      - "4318:4318"       # OTLP HTTP receiver
+      - "14250:14250"     # Model reception port
+      - "14268:14268"     # Jaeger HTTP receiver
+      - "9411:9411"       # Zipkin compatible port
     environment:
       - COLLECTOR_OTLP_ENABLED=true
       - COLLECTOR_ZIPKIN_HOST_PORT=:9411
     volumes:
-      - jaeger_data:/var/lib/jaeger # 持久化 Jaeger 数据
+      - jaeger_data:/var/lib/jaeger
     networks:
       - WeKnora-network
     restart: unless-stopped

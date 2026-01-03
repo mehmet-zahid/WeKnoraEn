@@ -726,6 +726,7 @@ export default {
     reset: "초기화",
     clear: "지우기",
     website: "공식 웹사이트",
+    github: "GitHub",
     on: "켜기",
     off: "끄기",
     resetToDefault: "기본값 복원",

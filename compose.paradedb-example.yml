@@ -1,0 +1,27 @@
+# ParadeDB kullanarak (Tüm extension'lar zaten içinde)
+version: '3.8'
+
+services:
+  postgres:
+    image: paradedb/paradedb:v0.18.9-pg17  # ParadeDB zaten vector, pg_search, bm25 içerir
+    container_name: shared-postgres
+    environment:
+      POSTGRES_USER: mzisik
+      POSTGRES_PASSWORD: Estagfirullah1
+      POSTGRES_DB: WeKnora
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      # İsteğe bağlı: Init script'ler ekleyebilirsiniz
+      - ./docker/postgres/init:/docker-entrypoint-initdb.d
+    ports:
+      - "5432:5432"
+    networks:
+      - shared-net
+
+volumes:
+  pgdata:
+
+networks:
+  shared-net:
+    driver: bridge
+

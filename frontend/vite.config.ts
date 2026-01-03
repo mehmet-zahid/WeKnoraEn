@@ -17,9 +17,10 @@ export default defineConfig({
     port: 5173,
     host: true,
     // Proxy configuration for development environment
+    // In Docker, use service name 'app', otherwise use localhost
     proxy: {
       '/api': {
-        target: 'http://localhost:8080',
+        target: process.env.VITE_IS_DOCKER === 'true' ? 'http://app:8080' : 'http://localhost:8080',
         changeOrigin: true,
         secure: false,
       }
