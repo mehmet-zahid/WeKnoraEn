@@ -1,17 +1,17 @@
 # WeKnora MCP Server
 
-这是一个 Model Context Protocol (MCP) 服务器，提供对 WeKnora 知识管理 API 的访问。
+This is a Model Context Protocol (MCP) server that provides access to the WeKnora knowledge management API.
 
-## 快速开始
+## Quick Start
 
-> 推荐直接参考 [MCP配置说明](./MCP_CONFIG.md)，无需进行以下操作。
+> It is recommended to directly refer to [MCP Configuration Guide](./MCP_CONFIG.md), no need to perform the following operations.
 
-### 1. 安装依赖
+### 1. Install Dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. 配置环境变量
+### 2. Configure Environment Variables
 ```bash
 # Linux/macOS
 export WEKNORA_BASE_URL="http://localhost:8080/api/v1"
@@ -26,118 +26,118 @@ set WEKNORA_BASE_URL=http://localhost:8080/api/v1
 set WEKNORA_API_KEY=your_api_key_here
 ```
 
-### 3. 运行服务器
+### 3. Run the Server
 
-**推荐方式 - 使用主入口点：**
+**Recommended Method - Using Main Entry Point:**
 ```bash
 python main.py
 ```
 
-**其他运行方式：**
+**Other Running Methods:**
 ```bash
-# 使用原始启动脚本
+# Using original startup script
 python run_server.py
 
-# 使用便捷脚本
+# Using convenience script
 python run.py
 
-# 直接运行服务器模块
+# Directly run server module
 python weknora_mcp_server.py
 
-# 作为 Python 模块运行
+# Run as Python module
 python -m weknora_mcp_server
 ```
 
-### 4. 命令行选项
+### 4. Command Line Options
 ```bash
-python main.py --help                 # 显示帮助信息
-python main.py --check-only           # 仅检查环境配置
-python main.py --verbose              # 启用详细日志
-python main.py --version              # 显示版本信息
+python main.py --help                 # Display help information
+python main.py --check-only           # Only check environment configuration
+python main.py --verbose              # Enable verbose logging
+python main.py --version              # Display version information
 ```
 
-## 安装为 Python 包
+## Install as Python Package
 
-### 开发模式安装
+### Development Mode Installation
 ```bash
 pip install -e .
 ```
 
-安装后可以使用命令行工具：
+After installation, you can use the command line tool:
 ```bash
 weknora-mcp-server
-# 或
+# or
 weknora-server
 ```
 
-### 生产模式安装
+### Production Mode Installation
 ```bash
 pip install .
 ```
 
-### 构建分发包
+### Build Distribution Package
 ```bash
-# 使用 setuptools
+# Using setuptools
 python setup.py sdist bdist_wheel
 
-# 使用现代构建工具
+# Using modern build tools
 pip install build
 python -m build
 ```
 
-## 测试模组
+## Test Module
 
-运行测试脚本验证模组是否正常工作：
+Run the test script to verify that the module is working correctly:
 ```bash
 python test_module.py
 ```
 
-## 功能特性
+## Features
 
-该 MCP 服务器提供以下工具：
+This MCP server provides the following tools:
 
-### 租户管理
-- `create_tenant` - 创建新租户
-- `list_tenants` - 列出所有租户
+### Tenant Management
+- `create_tenant` - Create a new tenant
+- `list_tenants` - List all tenants
 
-### 知识库管理
-- `create_knowledge_base` - 创建知识库
-- `list_knowledge_bases` - 列出知识库
-- `get_knowledge_base` - 获取知识库详情
-- `delete_knowledge_base` - 删除知识库
-- `hybrid_search` - 混合搜索
+### Knowledge Base Management
+- `create_knowledge_base` - Create a knowledge base
+- `list_knowledge_bases` - List knowledge bases
+- `get_knowledge_base` - Get knowledge base details
+- `delete_knowledge_base` - Delete a knowledge base
+- `hybrid_search` - Hybrid search
 
-### 知识管理
-- `create_knowledge_from_url` - 从 URL 创建知识
-- `list_knowledge` - 列出知识
-- `get_knowledge` - 获取知识详情
-- `delete_knowledge` - 删除知识
+### Knowledge Management
+- `create_knowledge_from_url` - Create knowledge from URL
+- `list_knowledge` - List knowledge
+- `get_knowledge` - Get knowledge details
+- `delete_knowledge` - Delete knowledge
 
-### 模型管理
-- `create_model` - 创建模型
-- `list_models` - 列出模型
-- `get_model` - 获取模型详情
+### Model Management
+- `create_model` - Create a model
+- `list_models` - List models
+- `get_model` - Get model details
 
-### 会话管理
-- `create_session` - 创建聊天会话
-- `get_session` - 获取会话详情
-- `list_sessions` - 列出会话
-- `delete_session` - 删除会话
+### Session Management
+- `create_session` - Create a chat session
+- `get_session` - Get session details
+- `list_sessions` - List sessions
+- `delete_session` - Delete a session
 
-### 聊天功能
-- `chat` - 发送聊天消息
+### Chat Functionality
+- `chat` - Send chat messages
 
-### 块管理
-- `list_chunks` - 列出知识块
-- `delete_chunk` - 删除知识块
+### Chunk Management
+- `list_chunks` - List knowledge chunks
+- `delete_chunk` - Delete a knowledge chunk
 
-## 故障排除
+## Troubleshooting
 
-如果遇到导入错误，请确保：
-1. 已安装所有必需的依赖包
-2. Python 版本兼容（推荐 3.10+）
-3. 没有文件名冲突（避免使用 `mcp.py` 作为文件名）
+If you encounter import errors, please ensure:
+1. All required dependency packages are installed
+2. Python version is compatible (recommended 3.10+)
+3. No filename conflicts (avoid using `mcp.py` as a filename)
 
-## 调用效果
+## Usage Example
 
 <img width="950" height="2063" alt="118d078426f42f3d4983c13386085d7f" src="https://github.com/user-attachments/assets/09111ec8-0489-415c-969d-aa3835778e14" />

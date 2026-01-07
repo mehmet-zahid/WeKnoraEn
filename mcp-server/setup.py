@@ -6,7 +6,7 @@ WeKnora MCP Server 安装脚本
 from setuptools import setup
 
 
-# 读取 README 文件
+# Read README file
 def read_readme():
     try:
         with open("README.md", "r", encoding="utf-8") as f:
@@ -15,7 +15,7 @@ def read_readme():
         return "WeKnora MCP Server - Model Context Protocol server for WeKnora API"
 
 
-# 读取依赖
+# Read dependencies
 def read_requirements():
     try:
         with open("requirements.txt", "r", encoding="utf-8") as f:
